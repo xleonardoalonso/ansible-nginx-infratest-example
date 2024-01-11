@@ -1,0 +1,45 @@
+---
+- name: Install and configure Nginx
+  hosts: localhost
+  become: yes
+  gather_facts: false
+
+  vars:
+    nginx_user: www-data
+    nginx_worker_processes: auto
+    nginx_pid_path: /run/nginx.pid
+    nginx_modules_path: /etc/nginx/modules-enabled/
+    nginx_worker_connections: 768
+    nginx_access_log_path: /var/log/nginx/access.log
+    nginx_error_log_path: /var/log/nginx/error.log
+    nginx_gzip: on
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Configure Nginx
+      block:
+        - name: Create directory for Nginx modules
+          file:
+            path: "{{ nginx_modules_path }}"
+            state: directory
+
+        - name: Copy customized configuration file
+          template:
+            src: templates/nginx.conf.j2
+            dest: /etc/nginx/nginx.conf
+          notify:
+            - Restart Nginx
+
+  handlers:
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
