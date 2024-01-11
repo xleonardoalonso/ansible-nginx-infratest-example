@@ -1,0 +1,30 @@
+user {{ nginx_user }};
+worker_processes {{ nginx_worker_processes }};
+pid {{ nginx_pid_path }};
+include {{ nginx_modules_path }}/*.conf;
+
+events {
+    worker_connections {{ nginx_worker_connections }};
+}
+
+http {
+    sendfile off;
+    tcp_nopush on;
+    tcp_nodelay on;
+    keepalive_timeout 65;
+    types_hash_max_size 2048;
+
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    access_log {{ nginx_access_log_path }};
+    error_log {{ nginx_error_log_path }};
+
+    {% if nginx_gzip == "on" %}
+    gzip on;
+    gzip_disable "msie6";
+    {% endif %}
+
+    include /etc/nginx/conf.d/*.conf;
+    include /etc/nginx/sites-enabled/*;
+}
