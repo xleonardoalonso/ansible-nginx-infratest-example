@@ -4,7 +4,7 @@ Install the NGINX web server on Ubuntu, and perform tests using testinfra
 (https://testinfra.readthedocs.io/en/latest/)
 
 Local execution for demo, in a productive environment it is necessary to make
-adjustments and it is interesting to run testinfra via CI
+adjustments and it is interesting run testinfra via CI
 
 ###### How to exec playbook & test
  
